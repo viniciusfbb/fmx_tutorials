@@ -11,12 +11,12 @@ Every time your app crashes, the ios automatically generate a crash report file,
 1)	Connect your device to your Mac
 2)	Open the **Xcode**, go to **Window > Devices and Simulators >**
 3)	In the Devices tab, select your device, and click in button "**View Device Logs**"
-<ss1.png>
+![(ss1.png](ss1.png)
 4)	You will see all crash reports of the iOS in your device, you can find your process and the last crash of it, and select it, as below:
-<ss2.png>
+![(ss2.png](ss2.png)
 See that this crash log does not display the call stack correctly, it only shows the addresses of the methods, but not their name, this is called unsymbolicated crash file, and that is what we will solve from now.
 5)	**Right click** > **Export Log**, as bellow:
-<ss3.png>
+![(ss3.png](ss3.png)
 6)	Save the file to 
 ```/Users/<user>/PAServer/scratch-dir/<user>-macOS/<myApp>.crash```
     -	Example the path in my mac: 
@@ -27,7 +27,7 @@ See that this crash log does not display the call stack correctly, it only shows
 
 ## Step 2 - Check the app symbols file
 Every time delphi compiles for iOS, in the folder where we saved the crash file, in the Mac, the PAServer save your app file and your app symbols file, that is, the files **<MyApp>.app** and **<MyApp>.app.dSYM**. So in this folder make sure that there will be these two files and the crash file, as bellow:
-<ss4.png>
+![(ss4.png](ss4.png)
 
 **Note:** Is very important to compile the app with the debug mode to generate a complete dSYM file, even if the app has crashed with closed delphi debugging, this dSYM file that will contain the symbols we need (unit and method names)
 
@@ -36,7 +36,7 @@ We need to have the path of the symbolicatecrash app in your Mac to do the last 
 1) Open the **Terminal** and type the command
 ```sudo find /Applications -name symbolicatecrash```
 2) Type the password and wait the result, as bellow:
-<ss5.png>
+![(ss5.png](ss5.png)
 3) We will prefer the symbolicatecrash that contains “SharedFrameworks” in the path, because it is compatible with all Apple platforms
 In my case, the path is:
 ```/Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework/Versions/A/Resources/symbolicatecrash```
@@ -57,6 +57,6 @@ We will go to symbolize the crash file:
     - In my case:
     ```/Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework/Versions/A/Resources/symbolicatecrash iPub4.crash iPub4.app > Symbolicate.crash```
 5) Now you will check the new file “**Symbolicate.crash**” together with the file “**<MyApp>.crash**”, as bellow:
-<ss6.png>
+![(ss6.png](ss6.png)
 6)	Now just open the "**Symbolicate.crash**" file with the **Text Editor**, and you will see the crash file with complete informations of call stacks:
-<ss7.png>
+![(ss7.png](ss7.png)
