@@ -7,7 +7,6 @@ However, as Erik himself warns,
 This means that in some cases you will not be able to catch the error either with a try except, or with the error report of Erik, because the app will simply crash (close unexpectedly), and here I will explain how we can better investigate these crashes.
 
 ## Step 1 - iOS crash report file
-----
 Every time your app crashes, the ios automatically generate a crash report file, even if you are not debugging, or even if your device is not connected to your Mac, this file is always generated. To access this file you need to:
 1)	Connect your device to your Mac
 2)	Open the **Xcode**, go to **Window > Devices and Simulators >**
@@ -27,14 +26,12 @@ See that this crash log does not display the call stack correctly, it only shows
 7)	Close the **Xcode**
 
 ## Step 2 - Check the app symbols file
-----
 Every time delphi compiles for iOS, in the folder where we saved the crash file, in the Mac, the PAServer save your app file and your app symbols file, that is, the files **<MyApp>.app** and **<MyApp>.app.dSYM**. So in this folder make sure that there will be these two files and the crash file, as bellow:
 <ss4.png>
 
 **Note:** Is very important to compile the app with the debug mode to generate a complete dSYM file, even if the app has crashed with closed delphi debugging, this dSYM file that will contain the symbols we need (unit and method names)
 
 ## Step 3 - Finding the symbolicatecrash app in your Mac
-----
 We need to have the path of the symbolicatecrash app in your Mac to do the last step. To find it:
 1) Open the **Terminal** and type the command
 ```sudo find /Applications -name symbolicatecrash```
@@ -45,7 +42,6 @@ In my case, the path is:
 ```/Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework/Versions/A/Resources/symbolicatecrash```
 
 ## Step 4 - Symbolizing the crash file
-----
 Now that we have: 
 - the path inside the PAServer folder where our app files are located, and now also our crash file;
 - the path of the app symbolicatecrash in your mac;
