@@ -7,5 +7,5 @@
 - *Find out which url opened your app (custom schemes and universal links)*
 
    [Delphi iOS - Exploring app crashes]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_exploring_app_crashes/>
-   [Delphi iOS - Universal Links]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_universal_links/>
-   [Delphi iOS - Handle incoming url]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_handle_incoming_url/>
+   [Delphi iOS - Universal Links]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_universal_links/README.md>
+   [Delphi iOS - Handle incoming url]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_handle_incoming_url/README.md>

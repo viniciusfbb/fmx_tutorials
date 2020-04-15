@@ -1,5 +1,5 @@
 # iOS Universal Links
-This is a tutorial of how to add a new Universal Link to your Delphi Firemonkey iOS app, to open your app by a link. In this tutorial adicionaremos o Universal Link: https://yoursite.com/app/
+This is a tutorial of how to add a new Universal Link to your Delphi Firemonkey iOS app, to open your app by a link. In this tutorial we will add the Universal Link: https://yoursite.com/app/
 
 ##### Why Universal Links and not Custom Schemes?
 For two reasons:
@@ -116,6 +116,6 @@ As I explained at the beginning, Universal Links only works for applications alr
 ### 5) Recommendation: Set the Android App Links too
 Although this tutorial is only for setting up Universal Links for your app on iOS, you should do the same for Android, which works in much the same way, but under another name: Android App Links. You can (should) configure Android App Links with the same Universal Link as iOS, so you can send the same link to your users, which will work to open your app on both Android and iOS. It will work identically.
 ### 6) Identify the URL that opened your app
-If you use more than 1 Universal Link, or your Universal Link has a wildcard, you will probably want to know which link opened your app. As this task is a little more complex to be done with Delphi, I made a tutorial just for that which works for Universal Links and Custom Schemes: https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_handle_incoming_url/
+If you use more than 1 Universal Link, or your Universal Link has a wildcard, you will probably want to know which link opened your app. As this task is a little more complex to be done with Delphi, I made a tutorial just for that which works for Universal Links and Custom Schemes: https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_handle_incoming_url/README.md
 ### 7) Utilities
 The sky is the limit, so there are endless uses, but I will highlight special one: QRCode. For example, if your app is for customers of restaurants, you can print the QRCode containing your app's Universal Link, to paste in restaurants. Thus, when the user points the camera, he will open his app, if installed, or open the AppStore to install his app.
