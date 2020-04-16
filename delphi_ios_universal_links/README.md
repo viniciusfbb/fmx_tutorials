@@ -87,7 +87,7 @@ As I explained at the beginning, Universal Links only works for applications alr
        	} else if (strpos($_SERVER['HTTP_USER_AGENT'],"Android")){
        		header("Location: market://details?id=com.yourapp", true, 301);
        	} else {
-       		header("Location: https://yourapp.com", true, 301);
+       		header("Location: https://yoursite.com", true, 301);
        	}
        ?>
 
