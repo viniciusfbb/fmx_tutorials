@@ -82,12 +82,16 @@ As I explained at the beginning, Universal Links only works for applications alr
 1) There are several ways to redirect, but I will do it here using a simple php code:
 
        <?php
-         if (strpos($_SERVER['HTTP_USER_AGENT'],"iPod") || strpos($_SERVER['HTTP_USER_AGENT'],"iPhone") ||  strpos($_SERVER['HTTP_USER_AGENT'],"iPad")) {
-           header("Location: https://itunes.apple.com/app/id00000000", true, 301);
-         }
+       	if (strpos($_SERVER['HTTP_USER_AGENT'],"iPod") || strpos($_SERVER['HTTP_USER_AGENT'],"iPhone") ||  strpos($_SERVER['HTTP_USER_AGENT'],"iPad")) {
+       		header("Location: https://itunes.apple.com/app/id00000000", true, 301);
+       	} else if (strpos($_SERVER['HTTP_USER_AGENT'],"Android")){
+       		header("Location: market://details?id=com.yourapp", true, 301);
+       	} else {
+       		header("Location: https://yourapp.com", true, 301);
+       	}
        ?>
 
-   If your app is already on the AppStore, put its id in place of ```id00000000```. Save this file with the name ```index.php``` and put it in the folder of your universal link on the host, to stay like this "https://yoursite.com/app/index.php".
+   If your app is already on the AppStore, put its id in place of ```id00000000```. In this code I put a android redirection, this is because you can set the same link in your app in ios and android. Save this file with the name ```index.php``` and put it in the folder of your universal link on the host, to stay like this "https://yoursite.com/app/index.php".
 2) I particularly use wildcard on my Universal Links, so I have to make the above php code run on any subpath, for example "https://yoursite.com/app/lahahaghgdhgsdhgfdhaasdf". For that, we have to configure a Friendly URL on our web server. How I use the IIS web server, and for those who use it, just create a file called ```web.config``` with the following content:
 
        <?xml version="1.0" encoding="UTF-8"?>
