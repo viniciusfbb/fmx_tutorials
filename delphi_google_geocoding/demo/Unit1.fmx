@@ -1,0 +1,31 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 254
+  ClientWidth = 298
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object btnGeolocationToAddress: TButton
+    Position.X = 56.000000000000000000
+    Position.Y = 64.000000000000000000
+    Size.Width = 153.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    Text = 'Geolocation to Address'
+    OnClick = btnGeolocationToAddressClick
+  end
+  object btnAddressToGeolocation: TButton
+    Position.X = 56.000000000000000000
+    Position.Y = 112.000000000000000000
+    Size.Width = 153.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Text = 'Address to Geolocation'
+    OnClick = btnAddressToGeolocationClick
+  end
+end
