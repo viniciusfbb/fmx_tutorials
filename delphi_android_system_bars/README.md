@@ -2,10 +2,10 @@
 
 One of the difficulties that we have in firemonkey is to have more control of the system bars and this is so important for the design of the app that it should be done in a simple way via form properties, but as this is not yet possible I will teach here how to leave the system bars (status bar and navigation bar) background full transparent, including on the splash screen, to improve the design of the forms.
 
-With this you can create beautiful apps, such as a calculator app with a completely white background, or even an gallery app with image below the status bar:
+With this you will be able to draw freely behind the system bars, allowing a more beautiful app:
 
 <p align="center">
-<img src="calculator.png" width=246 height=531> <img src="gallery.png" width=246 height=531>
+<img src="calculator.png" width=246 height=531> <img src="gallery.png" width=246 height=531> <img src="nubank.png" width=246 height=531>
 </p>
 
 ## TAndroidSystemBars
