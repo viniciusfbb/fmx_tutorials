@@ -1,5 +1,5 @@
 // [iPub - github.com/viniciusfbb] - 01/04/2021 - Delphi 10.4.1
-// https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_android_system_bars
+// https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_android_system_bars/
 unit iPub.Android.SystemBars;
 
 interface
@@ -18,20 +18,21 @@ type
   public
     class function GetNavigationBarHeight: Single; static;
     class function GetStatusBarHeight: Single; static;
-    // We will try to set the system bars (status bar and navigation bar) background
-    // full transparent (ignoring AStatusBarColor, ANavigationBarColor parameters)
-    // and set the app layout to cover the entire screen, that is, the form will be
-    // below the status bar and navigation bar. However in older android versions we
-    // don't have support to transparent status bar or transparent navigation bar,
-    // but some versions have the option to set an opaque color to system bars.
-    // When possible we will adjust automatically the light of system bars content
-    // (system bars foreground color) checking the brightness of AStatusBarColor and
-    // ANavigationBarColor to set the dark or light foreground. Notes:
+    // We will try to remove the system bars (status bar and navigation bar)
+    // background (ignoring ANearStatusBarColor, ANearNavigationBarColor
+    // parameters) and set the app layout to cover the entire screen, that is,
+    // the form will expand to below the status bar and navigation bar. However
+    // in older android versions we don't have support to transparent status bar
+    // or transparent navigation bar, but some versions have the option to set
+    // an opaque color to system bars. When possible we will adjust
+    // automatically the light of system bars content (system bars foreground
+    // color) checking the brightness of ANearStatusBarColor and
+    // ANearNavigationBarColor to set the dark or light foreground. Notes:
     // 1) don't use this before the OnCreate of main form
     // 2) you need to call GetStatusBarHeight and GetNavigationBarHeight to get
     // the system bars height to set the padding in your form to avoid some
     // controls like TEdit or TButton to go below the system bar
-    class procedure SetSystemBarsBackground(AStatusBarColor, ANavigationBarColor: TAlphaColor); static;
+    class procedure RemoveSystemBarsBackground(ANearStatusBarColor, ANearNavigationBarColor: TAlphaColor); static;
   end;
 
   {$REGION 'SPLASH SCREEN - system bars and background'}
@@ -203,16 +204,17 @@ begin
 end;
 
 {$REGION ' Considerations'}
-// We will try to set the system bars (status bar and navigation bar) background
-// full transparent (ignoring AStatusBarColor, ANavigationBarColor parameters)
-// and set the app layout to cover the entire screen, that is, the form will
-// expand to below the status bar and navigation bar. However in older android
-// versions we don't have support to transparent status bar or transparent
-// navigation bar, but some versions have the option to set an opaque color to
-// system bars. When possible we will adjust automatically the light of system
-// bars content (system bars foreground color) checking the brightness of
-// AStatusBarColor and ANavigationBarColor to set the dark or light foreground.
-// Notes: 1) don't use this before the OnCreate of main form
+// We will try to remove the system bars (status bar and navigation bar)
+// background (ignoring ANearStatusBarColor, ANearNavigationBarColor
+// parameters) and set the app layout to cover the entire screen, that is,
+// the form will expand to below the status bar and navigation bar. However
+// in older android versions we don't have support to transparent status bar
+// or transparent navigation bar, but some versions have the option to set
+// an opaque color to system bars. When possible we will adjust
+// automatically the light of system bars content (system bars foreground
+// color) checking the brightness of ANearStatusBarColor and
+// ANearNavigationBarColor to set the dark or light foreground. Notes:
+// 1) don't use this before the OnCreate of main form
 // 2) you need to call GetStatusBarHeight and GetNavigationBarHeight to get the
 // system bars height to set the padding in your form to avoid some controls
 // like TEdit or TButton to go below the system bar
@@ -224,7 +226,7 @@ end;
 // All worked perfectly. But these codes should work well on all android
 // versions supported by delphi (Android 6 to Android 11)
 {$ENDREGION}
-class procedure TAndroidSystemBars.SetSystemBarsBackground(AStatusBarColor, ANavigationBarColor: TAlphaColor);
+class procedure TAndroidSystemBars.RemoveSystemBarsBackground(ANearStatusBarColor, ANearNavigationBarColor: TAlphaColor);
 
   function AlphaColorToJColor(AColor: TAlphaColor): Integer;
   var
@@ -245,19 +247,19 @@ var
   LView: JView;
 begin
   // We will disconsider the alpha
-  TAlphaColorRec(AStatusBarColor).A := 255;
-  TAlphaColorRec(ANavigationBarColor).A := 255;
+  TAlphaColorRec(ANearStatusBarColor).A := 255;
+  TAlphaColorRec(ANearNavigationBarColor).A := 255;
 
   // Calculating the brightness of new system bars background
-  LStatusBarLight := (TAlphaColorRec(AStatusBarColor).R + TAlphaColorRec(AStatusBarColor).G +
-    TAlphaColorRec(AStatusBarColor).B) > 382;
-  LNavigationBarLight := (TAlphaColorRec(ANavigationBarColor).R + TAlphaColorRec(ANavigationBarColor).G +
-    TAlphaColorRec(ANavigationBarColor).B) > 382;
+  LStatusBarLight := (TAlphaColorRec(ANearStatusBarColor).R + TAlphaColorRec(ANearStatusBarColor).G +
+    TAlphaColorRec(ANearStatusBarColor).B) > 382;
+  LNavigationBarLight := (TAlphaColorRec(ANearNavigationBarColor).R + TAlphaColorRec(ANearNavigationBarColor).G +
+    TAlphaColorRec(ANearNavigationBarColor).B) > 382;
 
   // Initializing the local variables
   LSystemUiVisibility := 0;
-  LStatusBarJColor := AlphaColorToJColor(AStatusBarColor);
-  LNavigationBarJColor := AlphaColorToJColor(ANavigationBarColor);
+  LStatusBarJColor := AlphaColorToJColor(ANearStatusBarColor);
+  LNavigationBarJColor := AlphaColorToJColor(ANearNavigationBarColor);
   if Assigned(TAndroidHelper.Activity) then
     LWindow := TAndroidHelper.Activity.getWindow
   else
@@ -285,8 +287,8 @@ begin
     // This is really necessary because some devices (in my tests, in device LG LM-X430 Android32 10.0.0 (API level 29),
     // the full transparent don't work, the transparent color is replaced by a semitransparent white. However, when we avoid
     // the full transparent color, it work in all devices)
-    TAlphaColorRec(ANavigationBarColor).A := 1;
-    LNavigationBarJColor := AlphaColorToJColor(ANavigationBarColor);
+    TAlphaColorRec(ANearNavigationBarColor).A := 1;
+    LNavigationBarJColor := AlphaColorToJColor(ANearNavigationBarColor);
   end;
   if TJBuild_VERSION.JavaClass.SDK_INT >= TJBuild_VERSION_CODES.JavaClass.KITKAT then
   begin

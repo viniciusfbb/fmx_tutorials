@@ -2,10 +2,10 @@
 
 One of the difficulties that we have in firemonkey is to have more control of the system bars and this is so important for the design of the app that it should be done in a simple way via form properties, but as this is not yet possible I will teach here how to leave the system bars (status bar and navigation bar) background full transparent, including on the splash screen, to improve the design of the forms.
 
-With this you can create beautiful apps, such as a calculator app with a completely white background:
+With this you can create beautiful apps, such as a calculator app with a completely white background, or even an gallery app with image below the status bar:
 
 <p align="center">
-<img src="calculator.png" width=246 height=531>
+<img src="calculator.png" width=246 height=531> <img src="gallery.png" width=246 height=531>
 </p>
 
 ## TAndroidSystemBars
@@ -16,13 +16,13 @@ In this repository you need to download the iPub.Android.SystemBars.pas, to acce
   public
     class function GetNavigationBarHeight: Single; static;
     class function GetStatusBarHeight: Single; static;
-    class procedure SetSystemBarsBackground(AStatusBarColor, ANavigationBarColor: TAlphaColor); static;
+    class procedure RemoveSystemBarsBackground(ANearStatusBarColor, ANearNavigationBarColor: TAlphaColor); static;
   end;
   ```
 
-#### TAndroidSystemBars.SetSystemBarsBackground
+#### TAndroidSystemBars.RemoveSystemBarsBackground
 
-We will try to set the system bars (status bar and navigation bar) background full transparent (ignoring AStatusBarColor, ANavigationBarColor parameters) and set the app layout to cover the entire screen, that is, the form will expand to below the status bar and navigation bar. However in older android versions we don't have support to transparent status bar or transparent navigation bar, but some versions have the option to set an opaque color to system bars. When possible we will adjust automatically the light of system bars content (system bars foreground color) checking the brightness of AStatusBarColor and ANavigationBarColor to set the dark or light foreground.
+We will try to remove the system bars (status bar and navigation bar) background (ignoring ANearStatusBarColor, ANearNavigationBarColor parameters) and set the app layout to cover the entire screen, that is, the form will expand to below the status bar and navigation bar. However in older android versions we don't have support to transparent status bar or transparent navigation bar, but some versions have the option to set an opaque color to system bars. When possible we will adjust automatically the light of system bars content (system bars foreground color) checking the brightness of AStatusBarColor and ANavigationBarColor to set the dark or light foreground.
 
 Notes: 
   1) don't use this before the OnCreate of main form
@@ -38,13 +38,13 @@ Example:
   begin
     Fill.Kind := TBrushKind.Solid;
     Fill.Color := TAlphaColors.White;
-    TAndroidSystemBars.SetSystemBarsBackground(TAlphaColors.White, TAlphaColors.White);
+    TAndroidSystemBars.RemoveSystemBarsBackground(TAlphaColors.White, TAlphaColors.White);
   end;
   ```
 
 #### TAndroidSystemBars.GetStatusBarHeight and TAndroidSystemBars.GetNavigationBarHeight
 
-After call the "SetSystemBarsBackground" your form will expand to below the system bars, then you will need to call the GetStatusBarHeight and GetNavigationBarHeight to set the form padding to ajust the controls align of your form to don't go below the system bars (for example, one TButton with align top). Example:
+After call the "RemoveSystemBarsBackground" your form will expand to below the system bars, then you will need to call the GetStatusBarHeight and GetNavigationBarHeight to set the form padding to ajust the controls align of your form to don't go below the system bars (for example, one TButton with align top). Example:
 
   ```delphi
   uses
@@ -54,7 +54,7 @@ After call the "SetSystemBarsBackground" your form will expand to below the syst
   begin
     Fill.Kind := TBrushKind.Solid;
     Fill.Color := TAlphaColors.White;
-    TAndroidSystemBars.SetSystemBarsBackground(TAlphaColors.White, TAlphaColors.White);
+    TAndroidSystemBars.RemoveSystemBarsBackground(TAlphaColors.White, TAlphaColors.White);
 	Form1.Padding.Top := TAndroidSystemBars.GetStatusBarHeight;
 	Form1.Padding.Bottom := TAndroidSystemBars.GetNavigationBarHeight;
   end;
