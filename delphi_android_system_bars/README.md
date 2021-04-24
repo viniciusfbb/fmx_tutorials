@@ -107,18 +107,21 @@ Save the file in one subdirectory of your project, like "resources" subdirectory
 
 #### Deploying the "styles.xml" and "splash_image_def.xml"
 
- 1) Open your Project > Deployment
- 2) Add your own "styles.xml" file and set the Remote Path field to "res\values"
- 3) Add your own "splash_image_def.xml" file and set the Remote Path field to "res\drawable"
+ 1) Open your Project > Deployment, then you need to apply the following steps below for Android 32/64 bits in Release and Debug mode:
+ 2) Look in the "Local Name" column and disable these 3 default files: "styles.xml", "styles-v21.xml" and "splash_image_def.xml"
+ 3) Add your own "styles.xml" file and set the Remote Path field to "res\values"
+ 4) Add your own "splash_image_def.xml" file and set the Remote Path field to "res\drawable"
 
 Now you can uninstall your app, compile and run to see the difference ;)
 
 ## Compatibility
 
-I made some tests with Delphi Sydney 10.4.1 running the app in some devices:
+I made some tests with Delphi Sydney 10.4.1 and Delphi Rio 10.3.3 running the app in some devices:
 
-    LG      - LM-X430 Android32 10.0.0 (API level 29)
-    SAMSUNG - SM-G955F Android64 9.0.0 (API level 28)
-    SAMSUNG - SM-G935F Android64 8.0.0 (API level 26)
+    LG       - LM-X430 Android32 10.0.0 (API level 29)
+    SAMSUNG  - SM-A013M Android32 10.0.0 (API level 29)
+    SAMSUNG  - SM-G955F Android64 9.0.0 (API level 28)
+    SAMSUNG  - SM-G935F Android64 8.0.0 (API level 26)
+    MOTOROLA - MT-MotoG3 Android32 6.0.0 (API level 23)
 
 All worked perfectly. But these codes should work well on all android versions supported by delphi (Android 6 to Android 11).

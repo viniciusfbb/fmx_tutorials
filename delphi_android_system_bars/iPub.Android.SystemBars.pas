@@ -83,9 +83,10 @@ Save the file in one subdirectory of your project, like "resources" subdirectory
 
 #### Deploying the "styles.xml" and "splash_image_def.xml"
 
- 1) Open your Project > Deployment
- 2) Add your own "styles.xml" file and set the Remote Path field to "res\values"
- 3) Add your own "splash_image_def.xml" file and set the Remote Path field to "res\drawable"
+ 1) Open your Project > Deployment, then you need to apply the following steps below for Android 32/64 bits in Release and Debug mode:
+ 2) Look in the "Local Name" column and disable these 3 default files: "styles.xml", "styles-v21.xml" and "splash_image_def.xml"
+ 3) Add your own "styles.xml" file and set the Remote Path field to "res\values"
+ 4) Add your own "splash_image_def.xml" file and set the Remote Path field to "res\drawable"
 
 Now you can uninstall your app, compile and run to see the difference ;)
 *)
@@ -218,11 +219,13 @@ end;
 // 2) you need to call GetStatusBarHeight and GetNavigationBarHeight to get the
 // system bars height to set the padding in your form to avoid some controls
 // like TEdit or TButton to go below the system bar
-// Tested ides: Delphi Sydney 10.4.1
+// Tested ides: Delphi Sydney 10.4.1 and Delphi Rio 10.3.3
 // Tested devices:
-// LG      - LM-X430 Android32 10.0.0 (API level 29)
-// SAMSUNG - SM-G955F Android64 9.0.0 (API level 28)
-// SAMSUNG - SM-G935F Android64 8.0.0 (API level 26)
+// LG       - LM-X430 Android32 10.0.0 (API level 29)
+// SAMSUNG  - SM-A013M Android32 10.0.0 (API level 29)
+// SAMSUNG  - SM-G955F Android64 9.0.0 (API level 28)
+// SAMSUNG  - SM-G935F Android64 8.0.0 (API level 26)
+// MOTOROLA - MT-MotoG3 Android32 6.0.0 (API level 23)
 // All worked perfectly. But these codes should work well on all android
 // versions supported by delphi (Android 6 to Android 11)
 {$ENDREGION}
@@ -265,7 +268,11 @@ begin
   else
     LWindow := nil;
   if MainActivity <> nil then
+    {$IF CompilerVersion >= 34.0}
     LView := MainActivity.getContentView
+    {$ELSE}
+    LView := MainActivity.getViewGroup
+    {$ENDIF}
   else
     LView := nil;
   if Assigned(LWindow) then
@@ -274,13 +281,13 @@ begin
     LWinParams := nil;
 
   // Setting the configurations
-  if TJBuild_VERSION.JavaClass.SDK_INT >= TJBuild_VERSION_CODES.JavaClass.M then
+  if TOSVersion.Check(6) then // Android 6 (Marshmallow / Api level 23) or later
   begin
     if LStatusBarLight then
       LSystemUiVisibility := LSystemUiVisibility or TJView.JavaClass.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
     LStatusBarJColor := TJColor.JavaClass.TRANSPARENT;
   end;
-  if TJBuild_VERSION.JavaClass.SDK_INT >= TJBuild_VERSION_CODES.JavaClass.O then
+  if TOSVersion.Check(8) then // Android 8 (Oreo / Api level 26) or later
   begin
     if LNavigationBarLight then
       LSystemUiVisibility := LSystemUiVisibility or TJView.JavaClass.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
@@ -290,7 +297,7 @@ begin
     TAlphaColorRec(ANearNavigationBarColor).A := 1;
     LNavigationBarJColor := AlphaColorToJColor(ANearNavigationBarColor);
   end;
-  if TJBuild_VERSION.JavaClass.SDK_INT >= TJBuild_VERSION_CODES.JavaClass.KITKAT then
+  if TOSVersion.Check(5) or (TJBuild_VERSION.JavaClass.SDK_INT >= 19) then // Android 4.4 (Kitkat / Api level 19) or later
   begin
     LSystemUiVisibility := LSystemUiVisibility or
       TJView.JavaClass.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -299,15 +306,14 @@ begin
     if Assigned(LView) then
       LView.setSystemUiVisibility(LSystemUiVisibility);
   end;
-  if (TJBuild_VERSION.JavaClass.SDK_INT >= TJBuild_VERSION_CODES.JavaClass.KITKAT) and
-    (TJBuild_VERSION.JavaClass.SDK_INT < TJBuild_VERSION_CODES.JavaClass.LOLLIPOP) and
-    Assigned(LWinParams) then
+  if (not TOSVersion.Check(5)) and (TJBuild_VERSION.JavaClass.SDK_INT >= 19) and
+    Assigned(LWinParams) then // Android 4.4 (Kitkat / Api level 19) and Android 4.4.4 (Kitkat / Api level 20)
   begin
     LWinParams.flags := LWinParams.flags or
       TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_STATUS or
       TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_NAVIGATION;
   end;
-  if TJBuild_VERSION.JavaClass.SDK_INT >= TJBuild_VERSION_CODES.JavaClass.LOLLIPOP then
+  if TOSVersion.Check(5) then // Android 5 (Lollipop / Api level 21) or later
   begin
     if Assigned(LWinParams) then
     begin
