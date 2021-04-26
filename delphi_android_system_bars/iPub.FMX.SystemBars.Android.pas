@@ -1,6 +1,6 @@
 // [iPub - github.com/viniciusfbb] - 01/04/2021 - Delphi 10.4.1
 // https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_android_system_bars/
-unit iPub.Android.SystemBars;
+unit iPub.FMX.SystemBars.Android;
 
 interface
 
@@ -210,6 +210,40 @@ type
     TJWindowInsets_Type = class(TJavaGenericImport<JWindowInsets_TypeClass, JWindowInsets_Type>) end;
 
 
+    { WindowInsetsController }
+
+    JWindowInsetsControllerClass = interface(JObjectClass)
+      ['{D7FCB1D1-65AD-4A41-B873-6F8CD3B1E6F4}']
+      {class} function _GetAPPEARANCE_LIGHT_NAVIGATION_BARS: Integer; cdecl;
+      {class} function _GetAPPEARANCE_LIGHT_STATUS_BARS: Integer; cdecl;
+      {class} function _GetBEHAVIOR_DEFAULT: Integer; cdecl;
+      {class} function _GetBEHAVIOR_SHOW_BARS_BY_SWIPE: Integer; cdecl;
+      {class} function _GetBEHAVIOR_SHOW_BARS_BY_TOUCH: Integer; cdecl;
+      {class} function _GetBEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE: Integer; cdecl;
+      {class} property APPEARANCE_LIGHT_NAVIGATION_BARS: Integer read _GetAPPEARANCE_LIGHT_NAVIGATION_BARS;
+      {class} property APPEARANCE_LIGHT_STATUS_BARS: Integer read _GetAPPEARANCE_LIGHT_STATUS_BARS;
+      {class} property BEHAVIOR_DEFAULT: Integer read _GetBEHAVIOR_DEFAULT; // Android S
+      {class} property BEHAVIOR_SHOW_BARS_BY_SWIPE: Integer read _GetBEHAVIOR_SHOW_BARS_BY_SWIPE;
+      {class} property BEHAVIOR_SHOW_BARS_BY_TOUCH: Integer read _GetBEHAVIOR_SHOW_BARS_BY_TOUCH;
+      {class} property BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE: Integer read _GetBEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE;
+    end;
+
+    [JavaSignature('android/view/WindowInsetsController')]
+    JWindowInsetsController = interface(JObject)
+      ['{895DBAB1-0A52-4240-AC13-ED40474E6850}']
+      //procedure addOnControllableInsetsChangedListener(listener: JWindowInsetsController_OnControllableInsetsChangedListener); cdecl;
+      //procedure controlWindowInsetsAnimation(int types, long durationMillis, Interpolator interpolator, CancellationSignal cancellationSignal, WindowInsetsAnimationControlListener listener); cdecl;
+      function getSystemBarsAppearance: Integer; cdecl;
+      function getSystemBarsBehavior: Integer; cdecl;
+      procedure hide(types: Integer); cdecl;
+      //procedure removeOnControllableInsetsChangedListener(listener: JWindowInsetsController_OnControllableInsetsChangedListener); cdecl;
+      procedure setSystemBarsAppearance(appearance, mask: Integer); cdecl;
+      procedure setSystemBarsBehavior(behavior: Integer); cdecl;
+      procedure show(types: Integer); cdecl;
+    end;
+    TJWindowInsetsController = class(TJavaGenericImport<JWindowInsetsControllerClass, JWindowInsetsController>) end;
+
+
     { WindowInsets }
 
     JWindowInsetsExClass = interface(JWindowInsetsClass)
@@ -222,6 +256,34 @@ type
       function getInsets(typeMask: Integer): TAndroid10.JInsets; cdecl;
     end;
     TJWindowInsetsEx = class(TJavaGenericImport<JWindowInsetsExClass, JWindowInsetsEx>) end;
+
+
+    { Window }
+
+    JWindowExClass = interface(JWindowClass)
+      ['{6A055684-AA34-432C-8B18-12B7D721C599}']
+    end;
+
+    [JavaSignature('android/view/Window')]
+    JWindowEx = interface(JWindow)
+      ['{BC863876-71E3-4292-8B2C-860FADB8066C}']
+      procedure setDecorFitsSystemWindows(decorFitsSystemWindows: Boolean); cdecl;
+    end;
+    TJWindowEx = class(TJavaGenericImport<JWindowExClass, JWindowEx>) end;
+
+
+    { View }
+
+    JViewExClass = interface(JViewClass)
+      ['{44C48716-DA19-42A7-9141-E137DC92598F}']
+    end;
+
+    [JavaSignature('android/view/View')]
+    JViewEx = interface(JView)
+      ['{150FC57B-6421-4F25-A626-D0B51AA9E4FF}']
+      function getWindowInsetsController: JWindowInsetsController; cdecl;
+    end;
+    TJViewEx = class(TJavaGenericImport<JViewExClass, JViewEx>) end;
   end;
 
 {$IF CompilerVersion < 34.0} // Delphi Sydney 10.4
@@ -536,6 +598,7 @@ end;
 // TButton to go below the system bar
 // Tested ides: Delphi Sydney 10.4.1 and Delphi Rio 10.3.3
 // Tested devices:
+// GOOGLE   - G020A Android64 11.0.0 (API level 30)
 // LG       - LM-X430 Android32 10.0.0 (API level 29)
 // SAMSUNG  - SM-A013M Android32 10.0.0 (API level 29)
 // SAMSUNG  - SM-G955F Android64 9.0.0 (API level 28)
@@ -563,7 +626,11 @@ var
   LMainActivity: JFMXNativeActivity;
   LWinParams: JWindowManager_LayoutParams;
   LWindow: JWindow;
+  LWindowAndroid11: TAndroid11.JWindowEx;
+  LWindowInsetsController: TAndroid11.JWindowInsetsController;
+  LAppearance: Integer;
   LView: JView;
+  LViewAndroid11: TAndroid11.JViewEx;
 begin
   // We will disconsider the alpha
   TAlphaColorRec(ANearStatusBarColor).A := 255;
@@ -592,60 +659,101 @@ begin
     {$ENDIF}
   else
     LView := nil;
-  if Assigned(LWindow) then
-    LWinParams := LWindow.getAttributes
-  else
-    LWinParams := nil;
 
   // Setting the configurations
-  if TOSVersion.Check(6) then // Android 6 (Marshmallow / Api level 23) or later
+  if TOSVersion.Check(11) then // Android 11 (Api level 30) or later
   begin
-    if LStatusBarLight then
-      LSystemUiVisibility := LSystemUiVisibility or TJView.JavaClass.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
     LStatusBarJColor := TJColor.JavaClass.TRANSPARENT;
-  end;
-  if TOSVersion.Check(8) then // Android 8 (Oreo / Api level 26) or later
-  begin
-    if LNavigationBarLight then
-      LSystemUiVisibility := LSystemUiVisibility or TJView.JavaClass.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
     // This is really necessary because some devices (in my tests, in device LG LM-X430 Android32 10.0.0 (API level 29),
     // the full transparent don't work, the transparent color is replaced by a semitransparent white. However, when we avoid
     // the full transparent color, it work in all devices)
     TAlphaColorRec(ANearNavigationBarColor).A := 1;
     LNavigationBarJColor := AlphaColorToJColor(ANearNavigationBarColor);
-  end;
-  if TOSVersion.Check(5) or (TJBuild_VERSION.JavaClass.SDK_INT >= 19) then // Android 4.4 (Kitkat / Api level 19) or later
-  begin
-    LSystemUiVisibility := LSystemUiVisibility or
-      TJView.JavaClass.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-      TJView.JavaClass.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-      TJView.JavaClass.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-    if Assigned(LView) then
-      LView.setSystemUiVisibility(LSystemUiVisibility);
-  end;
-  if (not TOSVersion.Check(5)) and (TJBuild_VERSION.JavaClass.SDK_INT >= 19) and
-    Assigned(LWinParams) then // Android 4.4 (Kitkat / Api level 19) and Android 4.4.4 (Kitkat / Api level 20)
-  begin
-    LWinParams.flags := LWinParams.flags or
-      TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_STATUS or
-      TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_NAVIGATION;
-  end;
-  if TOSVersion.Check(5) then // Android 5 (Lollipop / Api level 21) or later
-  begin
-    if Assigned(LWinParams) then
-    begin
-      LWinParams.flags := LWinParams.flags and not
-        (TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_STATUS or
-         TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_NAVIGATION);
-    end;
+
     if Assigned(LWindow) then
     begin
       LWindow.setStatusBarColor(LStatusBarJColor);
       LWindow.setNavigationBarColor(LNavigationBarJColor);
+      LWindowAndroid11 := TAndroid11.TJWindowEx.Wrap((LWindow as ILocalObject).GetObjectID);
+      if Assigned(LWindowAndroid11) then
+        LWindowAndroid11.setDecorFitsSystemWindows(False);
     end;
+    if Assigned(LView) then
+    begin
+      LViewAndroid11 := TAndroid11.TJViewEx.Wrap((LView as ILocalObject).GetObjectID);
+      if Assigned(LViewAndroid11) then
+      begin
+        LWindowInsetsController := LViewAndroid11.getWindowInsetsController;
+        if Assigned(LWindowInsetsController) then
+        begin
+          LAppearance := 0;
+          if LStatusBarLight then
+            LAppearance := LAppearance or TAndroid11.TJWindowInsetsController.JavaClass.APPEARANCE_LIGHT_STATUS_BARS;
+          if LNavigationBarLight then
+            LAppearance := LAppearance or TAndroid11.TJWindowInsetsController.JavaClass.APPEARANCE_LIGHT_NAVIGATION_BARS;
+          LWindowInsetsController.setSystemBarsAppearance(LAppearance,
+            TAndroid11.TJWindowInsetsController.JavaClass.APPEARANCE_LIGHT_STATUS_BARS or
+            TAndroid11.TJWindowInsetsController.JavaClass.APPEARANCE_LIGHT_NAVIGATION_BARS);
+        end;
+      end;
+    end;
+  end
+  else
+  begin
+    if Assigned(LWindow) then
+      LWinParams := LWindow.getAttributes
+    else
+      LWinParams := nil;
+
+    if TOSVersion.Check(6) then // Android 6 (Marshmallow / Api level 23) or later
+    begin
+      if LStatusBarLight then
+        LSystemUiVisibility := LSystemUiVisibility or TJView.JavaClass.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+      LStatusBarJColor := TJColor.JavaClass.TRANSPARENT;
+    end;
+    if TOSVersion.Check(8) then // Android 8 (Oreo / Api level 26) or later
+    begin
+      if LNavigationBarLight then
+        LSystemUiVisibility := LSystemUiVisibility or TJView.JavaClass.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+      // This is really necessary because some devices (in my tests, in device LG LM-X430 Android32 10.0.0 (API level 29),
+      // the full transparent don't work, the transparent color is replaced by a semitransparent white. However, when we avoid
+      // the full transparent color, it work in all devices)
+      TAlphaColorRec(ANearNavigationBarColor).A := 1;
+      LNavigationBarJColor := AlphaColorToJColor(ANearNavigationBarColor);
+    end;
+    if TOSVersion.Check(5) or (TJBuild_VERSION.JavaClass.SDK_INT >= 19) and // Android 4.4 (Kitkat / Api level 19) or later
+      Assigned(LView) then
+    begin
+      LSystemUiVisibility := LSystemUiVisibility or
+        TJView.JavaClass.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+        TJView.JavaClass.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+        TJView.JavaClass.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+      LView.setSystemUiVisibility(LSystemUiVisibility);
+    end;
+    if (not TOSVersion.Check(5)) and (TJBuild_VERSION.JavaClass.SDK_INT >= 19) and
+      Assigned(LWinParams) then // Android 4.4 (Kitkat / Api level 19) and Android 4.4.4 (Kitkat / Api level 20)
+    begin
+      LWinParams.flags := LWinParams.flags or
+        TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_STATUS or
+        TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_NAVIGATION;
+    end;
+    if TOSVersion.Check(5) then // Android 5 (Lollipop / Api level 21) or later
+    begin
+      if Assigned(LWinParams) then
+      begin
+        LWinParams.flags := LWinParams.flags and not
+          (TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_STATUS or
+           TJWindowManager_LayoutParams.JavaClass.FLAG_TRANSLUCENT_NAVIGATION);
+      end;
+      if Assigned(LWindow) then
+      begin
+        LWindow.setStatusBarColor(LStatusBarJColor);
+        LWindow.setNavigationBarColor(LNavigationBarJColor);
+      end;
+    end;
+    if Assigned(LWindow) and Assigned(LWinParams) then
+      LWindow.setAttributes(LWinParams);
   end;
-  if Assigned(LWindow) and Assigned(LWinParams) then
-    LWindow.setAttributes(LWinParams);
   if Assigned(LView) then
     LView.setFitsSystemWindows(False);
 end;
@@ -661,8 +769,9 @@ begin
 end;
 
 initialization
-  TRegTypes.RegisterType('iPub.Android.SystemBars.TAndroid10.JInsets', TypeInfo(iPub.Android.SystemBars.TAndroid10.JInsets));
-  TRegTypes.RegisterType('iPub.Android.SystemBars.TAndroid11.JWindowInsets_Type', TypeInfo(iPub.Android.SystemBars.TAndroid11.JWindowInsets_Type));
+  TRegTypes.RegisterType('iPub.FMX.SystemBars.Android.TAndroid10.JInsets', TypeInfo(iPub.FMX.SystemBars.Android.TAndroid10.JInsets));
+  TRegTypes.RegisterType('iPub.FMX.SystemBars.Android.TAndroid11.JWindowInsets_Type', TypeInfo(iPub.FMX.SystemBars.Android.TAndroid11.JWindowInsets_Type));
+  TRegTypes.RegisterType('iPub.FMX.SystemBars.Android.TAndroid11.JWindowInsetsController', TypeInfo(iPub.FMX.SystemBars.Android.TAndroid11.JWindowInsetsController));
 {$ELSE}
 implementation
 {$ENDIF}

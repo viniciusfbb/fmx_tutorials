@@ -5,12 +5,12 @@ One of the difficulties that we have in firemonkey is to have more control of th
 With this you will be able to draw freely behind the system bars, allowing a more beautiful app:
 
 <p align="center">
-<img src="calculator.png" width=246 height=531> <img src="gallery.png" width=246 height=531> <img src="nubank.png" width=246 height=531>
+<img src="screenshots/calculator.png" width=246 height=531> <img src="screenshots/gallery.png" width=246 height=531> <img src="screenshots/nubank.png" width=246 height=531>
 </p>
 
 ## TAndroidSystemBars
 
-In this repository you need to download the iPub.Android.SystemBars.pas, to access the structure TAndroidSystemBars:
+In this repository you need to download the iPub.FMX.SystemBars.Android.pas, to access the structure TAndroidSystemBars:
   ```delphi
   TAndroidSystemBars = record
   public
@@ -33,13 +33,13 @@ Example:
 
   ```delphi
   uses
-    iPub.Android.SystemBars;
+    iPub.FMX.SystemBars.Android;
   
   procedure TForm1.FormCreate(Sender: TObject);
   begin
     Fill.Kind := TBrushKind.Solid;
     Fill.Color := TAlphaColors.White;
-    TAndroidSystemBars.RemoveSystemBarsBackground(TAlphaColors.White, TAlphaColors.White);
+    TAndroidSystemBars.RemoveSystemBarsBackground(Fill.Color, Fill.Color);
   end;
   ```
 
@@ -49,13 +49,13 @@ After call the "RemoveSystemBarsBackground" your form will expand to below the s
 
   ```delphi
   uses
-    iPub.Android.SystemBars;
+    iPub.FMX.SystemBars.Android;
   
   procedure TForm1.FormCreate(Sender: TObject);
   begin
     Fill.Kind := TBrushKind.Solid;
     Fill.Color := TAlphaColors.White;
-    TAndroidSystemBars.RemoveSystemBarsBackground(TAlphaColors.White, TAlphaColors.White);
+    TAndroidSystemBars.RemoveSystemBarsBackground(Fill.Color, Fill.Color);
 	Padding.Rect := TAndroidSystemBars.TappableInsets;
   end;
   ```
@@ -71,7 +71,33 @@ TappedInsets: Size of system sidebars that cannot be directly above content (mai
 
 ### TAndroidSystemBars.OnInsetsChange
 
-This event will be triggered always when any insets (system bars sizes) change. It is important to implement this event because a common example of triggering is when rotating the screen of your app, as your navigation bar will probably go to the right of the screen or to the left of the screen, so you will have to adjust the Padding of the form to avoid that the content is below the status bar.
+This event will be triggered always when any insets (system bars sizes) change. It is important to implement this event because a common example of triggering is when rotating the screen of your app, as your navigation bar will probably go to the right of the screen or to the left of the screen, so you will have to adjust the Padding of the form to avoid that the content is below the status bar. Example:
+
+  ```delphi
+    TForm1 = class(TForm)
+      procedure FormCreate(Sender: TObject);
+    private
+      procedure OnInsetsChange(Sender: TObject);
+    end;
+
+  implementation
+
+  uses
+    iPub.FMX.SystemBars.Android;
+  
+  procedure TForm1.FormCreate(Sender: TObject);
+  begin
+    Fill.Kind := TBrushKind.Solid;
+    Fill.Color := TAlphaColors.White;
+    TAndroidSystemBars.RemoveSystemBarsBackground(Fill.Color, Fill.Color);
+    TAndroidSystemBars.OnInsetsChange := OnInsetsChange;
+  end;
+
+  procedure TForm1.OnInsetsChange(Sender: TObject);
+  begin
+    Padding.Rect := TAndroidSystemBars.TappableInsets;
+  end;
+  ```
   
 ## Splash screen - System bars and background
 
@@ -131,6 +157,7 @@ Now you can uninstall your app, compile and run to see the difference ;)
 
 I made some tests with Delphi Sydney 10.4.1 and Delphi Rio 10.3.3 running the app in some devices:
 
+    GOOGLE   - G020A Android64 11.0.0 (API level 30)
     LG       - LM-X430 Android32 10.0.0 (API level 29)
     SAMSUNG  - SM-A013M Android32 10.0.0 (API level 29)
     SAMSUNG  - SM-G955F Android64 9.0.0 (API level 28)
