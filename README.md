@@ -11,11 +11,11 @@
 4) ### [Delphi All - Google Geocoding]
    > Getting the address of an geographic coordinates, and the reverse, getting the geographic coordinates of an address
 
-5) ### [Delphi Android - System Bars]
-   > Setting the status bar and navigation bar background full transparent, including the splash screen ones
+5) ### [Delphi All - System Bars]
+   > Setting the status bar and navigation bar background colors and visibility, getting the bounds and an extra tip to get the system bars full transparent in android's splash screen
 
    [Delphi iOS - Exploring app crashes]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_exploring_app_crashes/>
    [Delphi iOS - Universal Links]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_universal_links/README.md>
    [Delphi iOS - Handle incoming url]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_ios_handle_incoming_url/README.md>
    [Delphi All - Google Geocoding]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_google_geocoding/>
-   [Delphi Android - System Bars]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_android_system_bars/>
+   [Delphi All - System Bars]: <https://github.com/viniciusfbb/fmx_tutorials/tree/master/delphi_system_bars/>
