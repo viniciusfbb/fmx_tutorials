@@ -33,7 +33,7 @@ uses
   Form1.SystemBars.Visibility := TipFormSystemBars.TVisibilityMode.VisibleAndOverlap;
 ```
 
-Quando o TVisibilityMode.VisibleAndOverlap estiver sendo usado, você poderá ver o tamanho das barras do system através do código:
+When TVisibilityMode.VisibleAndOverlap is being used, you can see the size of the system bars through the code:
 
 ```delphi
 uses
@@ -47,7 +47,7 @@ uses
 
 There is also the TappableInsets property, which are the distances in which the system bars, without gesture bar, are overlapping the sides of the form (top, left, right and bottom).
 
-Você também pode capturar as alterações nos Insets. Isso pode ser útil quando o aplicativo for rotacionado.
+You can also capture changes to Insets. This can be useful when the app is rotated. See:
 
 ```delphi
 uses
