@@ -118,7 +118,7 @@ Now you can uninstall your app, compile and run to see the difference ;)
 
 ## Compatibility
 
-I made some tests with Delphi Sydney 10.4.2 and Delphi Rio 10.3.3 running the app in some devices:
+I made some tests with Delphi 11 Alexandria, Delphi 10.4.2 Sydney and Delphi 10.3.3 Rio running the app in some devices:
 
     GOOGLE   - G020A Android64 11.0.0 (API level 30)
     LG       - LM-X430 Android32 10.0.0 (API level 29)

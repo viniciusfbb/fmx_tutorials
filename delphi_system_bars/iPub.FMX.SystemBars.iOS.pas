@@ -220,7 +220,7 @@ function TipSystemBarsServiceiOS.GetStatusBarOffset(const AForm: TCommonCustomFo
     LRttiProperty: TRttiProperty;
     LCocoaTouchWindowManager: TObject;
   begin
-    {$IF CompilerVersion > 34} // Delphi 10.4 Sydney
+    {$IF CompilerVersion > 35} // Delphi 11 Alexandria
       {$MESSAGE WARN 'Check in file FMX.Platform.iOS.pas if the class TCocoaTouchWindowManager have already the property "StatusBarOffset: Single" and adjust the IFDEF'}
     {$ENDIF}
     LCocoaTouchWindowManager := TObject(FDefaultStatusBarService);
@@ -255,15 +255,15 @@ end;
 function TipSystemBarsServiceiOS.RemoveKeyboardOverlappedBars(
   const AInsets: TRectF): TRectF;
 var
-  LScreenSize: TSize;
+  LScreenSize: TSizeF;
 begin
   Result := AInsets;
   if (not FVirtualKeyboardBounds.IsEmpty) and (AInsets <> TRectF.Empty) then
   begin
     LScreenSize := Screen.Size;
     // Check if virtual keyboard is in bottom
-    if (LScreenSize.Height = FVirtualKeyboardBounds.Bottom) and (FVirtualKeyboardBounds.Left = 0) and
-      (FVirtualKeyboardBounds.Right = LScreenSize.Width) then
+    if SameValue(LScreenSize.Height, FVirtualKeyboardBounds.Bottom, TEpsilon.Position) and (FVirtualKeyboardBounds.Left = 0) and
+      SameValue(FVirtualKeyboardBounds.Right, LScreenSize.Width, TEpsilon.Position) then
     begin
       // Removing bottom system bars
       Result.Bottom := Max(Result.Bottom - FVirtualKeyboardBounds.Height, 0);
