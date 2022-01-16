@@ -1,3 +1,14 @@
+{************************************************************************}
+{                                                                        }
+{                          iPub.FMX.SystemBars                           }
+{                                                                        }
+{ Copyright (c) 2021-2022 iPub                                           }
+{ https://github.com/viniciusfbb/fmx_tutorials                           }
+{                                                                        }
+{ Use of this source code is governed by a MIT license that can be found }
+{ at https://opensource.org/licenses/MIT                                 }
+{                                                                        }
+{************************************************************************}
 unit iPub.FMX.SystemBars;
 
 interface

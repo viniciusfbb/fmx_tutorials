@@ -59,7 +59,7 @@ procedure TForm1.SystemBarsInsetsChange(Sender: TObject);
 begin
 end;
 
-  Form1.SystemBars.OnSystemBarsInsetsChange := SystemBarsInsetsChange;
+  Form1.SystemBars.OnInsetsChange := SystemBarsInsetsChange;
 ```
 
 ## Android Splash screen - System bars and background

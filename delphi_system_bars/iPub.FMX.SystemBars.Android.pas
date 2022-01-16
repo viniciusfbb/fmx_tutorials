@@ -1,3 +1,14 @@
+{************************************************************************}
+{                                                                        }
+{                          iPub.FMX.SystemBars                           }
+{                                                                        }
+{ Copyright (c) 2021-2022 iPub                                           }
+{ https://github.com/viniciusfbb/fmx_tutorials                           }
+{                                                                        }
+{ Use of this source code is governed by a MIT license that can be found }
+{ at https://opensource.org/licenses/MIT                                 }
+{                                                                        }
+{************************************************************************}
 unit iPub.FMX.SystemBars.Android;
 
 interface
@@ -38,10 +49,20 @@ uses
   iPub.FMX.SystemBars;
 
 type
+  { IipSystemBarsServiceAndroid }
+
+  IipSystemBarsServiceAndroid = interface(TipFormSystemBars.IFMXWindowSystemBarsService)
+    ['{77586947-BF49-4938-9A34-51588E8BD915}']
+    procedure CheckInsetsChanges(const AForm: TCommonCustomForm);
+    function HasGestureNavigationBar(const AForm: TCommonCustomForm): Boolean;
+    procedure TryFixInvisibleMode;
+  end;
+
   { TipSystemBarsServiceAndroid }
 
-  TipSystemBarsServiceAndroid = class(TInterfacedObject, TipFormSystemBars.IFMXWindowSystemBarsService,
-    IFMXWindowSystemStatusBarService, IFMXFullScreenWindowService)
+  TipSystemBarsServiceAndroid = class(TInterfacedObject, IipSystemBarsServiceAndroid,
+    TipFormSystemBars.IFMXWindowSystemBarsService, IFMXWindowSystemStatusBarService,
+    IFMXFullScreenWindowService)
   strict private
     type
       TOnApplyWindowInsetsListener = class(TJavaLocal, JView_OnApplyWindowInsetsListener)
@@ -448,7 +469,7 @@ end;
 {$ENDREGION}
 
 var
-  FSystemBarsServiceAndroid: TipSystemBarsServiceAndroid;
+  FSystemBarsServiceAndroid: IipSystemBarsServiceAndroid;
 
 { TipSystemBarsServiceAndroid.TOnApplyWindowInsetsListener }
 
@@ -598,11 +619,9 @@ end;
 destructor TipSystemBarsServiceAndroid.TWindowServiceFix.Destroy;
 begin
   { IFMXFullScreenWindowService }
+  TPlatformServices.Current.RemovePlatformService(IFMXWindowService);
   if Assigned(FDefaultWindowService) then
-  begin
-    TPlatformServices.Current.RemovePlatformService(IFMXWindowService);
     TPlatformServices.Current.AddPlatformService(IFMXWindowService, FDefaultWindowService);
-  end;
   inherited;
 end;
 
@@ -1774,8 +1793,6 @@ initialization
   TRegTypes.RegisterType('iPub.FMX.SystemBars.Android.TAndroid10.JInsets', TypeInfo(iPub.FMX.SystemBars.Android.TAndroid10.JInsets));
   TRegTypes.RegisterType('iPub.FMX.SystemBars.Android.TAndroid11.JWindowInsetsController', TypeInfo(iPub.FMX.SystemBars.Android.TAndroid11.JWindowInsetsController));
   FSystemBarsServiceAndroid := TipSystemBarsServiceAndroid.Create;
-finalization
-  FreeAndNil(FSystemBarsServiceAndroid);
 {$ELSE}
 implementation
 {$ENDIF}
