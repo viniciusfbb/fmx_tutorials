@@ -1304,8 +1304,16 @@ end;
 
 function TipSystemBarsServiceAndroid.GetFullScreen(
   const AForm: TCommonCustomForm): Boolean;
+var
+  LSystemBars: TipFormSystemBars;
 begin
-  Result := Assigned(AForm) and (AForm.SystemBars.Visibility = TipFormSystemBars.TVisibilityMode.Invisible);
+  Result := False;
+  if Assigned(AForm) then
+  begin
+    LSystemBars := AForm.SystemBars;
+    if Assigned(LSystemBars) then
+      Result := LSystemBars.Visibility = TipFormSystemBars.TVisibilityMode.Invisible;
+  end;
 end;
 
 function TipSystemBarsServiceAndroid.GetInsets(const AForm: TCommonCustomForm): TRectF;
