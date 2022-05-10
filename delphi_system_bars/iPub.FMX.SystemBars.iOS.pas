@@ -48,6 +48,7 @@ type
     FDefaultStatusBarService: IFMXWindowSystemStatusBarService;
     FGestureBarChecked: Boolean;
     FGestureBarOffset: Single;
+    FOrientationChangedMessageId: Integer;
     FRegisteredBarsService: Boolean;
     FVirtualKeyboardBounds: TRect;
     FVirtualKeyboardMessageId: Integer;
@@ -56,6 +57,7 @@ type
     procedure FormActivate(const ASender: TObject; const AMessage: TMessage);
     function GetGestureBarOffset(const AForm: TCommonCustomForm): Single;
     function GetStatusBarOffset(const AForm: TCommonCustomForm): Single;
+    procedure OrientationChanged(const ASender: TObject; const AMessage: TMessage);
     function RemoveKeyboardOverlappedBars(const AInsets: TRectF): TRectF;
     procedure VirtualKeyboardChangeHandler(const ASender: TObject; const AMessage: TMessage);
   public
@@ -123,12 +125,14 @@ begin
   end;
   FAfterCreateFormHandleMessageId := TMessageManager.DefaultManager.SubscribeToMessage(TAfterCreateFormHandle, AfterCreateFormHandle);
   FFormActivateMessageId := TMessageManager.DefaultManager.SubscribeToMessage(TFormActivateMessage, FormActivate);
+  FOrientationChangedMessageId := TMessageManager.DefaultManager.SubscribeToMessage(TOrientationChangedMessage, OrientationChanged);
   FVirtualKeyboardMessageId := TMessageManager.DefaultManager.SubscribeToMessage(TVKStateChangeMessage, VirtualKeyboardChangeHandler);
 end;
 
 destructor TipSystemBarsServiceiOS.Destroy;
 begin
   TMessageManager.DefaultManager.Unsubscribe(TVKStateChangeMessage, FVirtualKeyboardMessageId);
+  TMessageManager.DefaultManager.Unsubscribe(TOrientationChangedMessage, FOrientationChangedMessageId);
   TMessageManager.DefaultManager.Unsubscribe(TFormActivateMessage, FFormActivateMessageId);
   TMessageManager.DefaultManager.Unsubscribe(TAfterCreateFormHandle, FAfterCreateFormHandleMessageId);
   if FRegisteredBarsService then
@@ -261,6 +265,13 @@ function TipSystemBarsServiceiOS.GetTappableInsets(const AForm: TCommonCustomFor
 begin
   Result := TRectF.Create(0, GetStatusBarOffset(AForm), 0, 0);
   Result := RemoveKeyboardOverlappedBars(Result);
+end;
+
+procedure TipSystemBarsServiceiOS.OrientationChanged(const ASender: TObject;
+  const AMessage: TMessage);
+begin
+  if Assigned(Screen) then
+    CheckInsetsChanges(Screen.ActiveForm);
 end;
 
 function TipSystemBarsServiceiOS.RemoveKeyboardOverlappedBars(
