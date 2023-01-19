@@ -1398,9 +1398,16 @@ end;
 
 function TipSystemBarsServiceAndroid.HasGestureNavigationBar(
   const AForm: TCommonCustomForm): Boolean;
+
+  function SameRectIgnoringTop(const ALeft, ARight: TRect): Boolean;
+  begin
+    Result := (ALeft.Left = ARight.Left) and (ALeft.Right = ARight.Right) and
+      (ALeft.Bottom = ARight.Bottom);
+  end;
+
 begin
   if TOSVersion.Check(10) then // Android 10 (api level 29) or later
-    Result := HasSystemBars(AForm) and AForm.Active and (DoGetAbsoluteInsets(AForm) <> DoGetAbsoluteTappableInsets(AForm))
+    Result := HasSystemBars(AForm) and AForm.Active and not SameRectIgnoringTop(DoGetAbsoluteInsets(AForm), DoGetAbsoluteTappableInsets(AForm))
   else
     Result := False;
 end;
