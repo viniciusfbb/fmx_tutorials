@@ -619,9 +619,12 @@ end;
 destructor TipSystemBarsServiceAndroid.TWindowServiceFix.Destroy;
 begin
   { IFMXFullScreenWindowService }
-  TPlatformServices.Current.RemovePlatformService(IFMXWindowService);
-  if Assigned(FDefaultWindowService) then
-    TPlatformServices.Current.AddPlatformService(IFMXWindowService, FDefaultWindowService);
+  if TPlatformServices.Current <> nil then
+  begin
+    TPlatformServices.Current.RemovePlatformService(IFMXWindowService);
+    if Assigned(FDefaultWindowService) then
+      TPlatformServices.Current.AddPlatformService(IFMXWindowService, FDefaultWindowService);
+  end;
   inherited;
 end;
 
@@ -915,16 +918,19 @@ begin
   TMessageManager.DefaultManager.Unsubscribe(TBeforeDestroyFormHandle, FBeforeDestroyFormHandleMessageId);
   TMessageManager.DefaultManager.Unsubscribe(TFormReleasedMessage, FFormReleasedMessageId);
   TMessageManager.DefaultManager.Unsubscribe(TFormActivateMessage, FFormActivateMessageId);
-  { IFMXFullScreenWindowService }
-  TPlatformServices.Current.RemovePlatformService(IFMXFullScreenWindowService);
-  if Assigned(FDefaultFullScreenService) then
-    TPlatformServices.Current.AddPlatformService(IFMXFullScreenWindowService, FDefaultFullScreenService);
-  { IFMXWindowSystemBarsService }
-  if FRegisteredBarsService then
-    TPlatformServices.Current.RemovePlatformService(TipFormSystemBars.IFMXWindowSystemBarsService);
-  { IFMXWindowSystemStatusBarService }
-  if FRegisteredStatusBarService then
-    TPlatformServices.Current.RemovePlatformService(IFMXWindowSystemStatusBarService);
+  if TPlatformServices.Current <> nil then
+  begin
+    { IFMXFullScreenWindowService }
+    TPlatformServices.Current.RemovePlatformService(IFMXFullScreenWindowService);
+    if Assigned(FDefaultFullScreenService) then
+      TPlatformServices.Current.AddPlatformService(IFMXFullScreenWindowService, FDefaultFullScreenService);
+    { IFMXWindowSystemBarsService }
+    if FRegisteredBarsService then
+      TPlatformServices.Current.RemovePlatformService(TipFormSystemBars.IFMXWindowSystemBarsService);
+    { IFMXWindowSystemStatusBarService }
+    if FRegisteredStatusBarService then
+      TPlatformServices.Current.RemovePlatformService(IFMXWindowSystemStatusBarService);
+  end;
 
   if Assigned(FOnAttachStateChangeListener) then
   begin
